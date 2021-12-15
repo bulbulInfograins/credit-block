@@ -24,6 +24,9 @@ const Users = new schema({
     role:{
         type: Number,
     },
+    hash_transaction:{
+        type:String
+    },
     is_delete:{
         type:Boolean,
         default:false

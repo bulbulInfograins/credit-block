@@ -2,6 +2,7 @@ const User = require('../model/user');
 var bcrypt = require('bcryptjs');
 
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 
 async function hashPassword(password) {
     return await bcrypt.hash(password, 10);
@@ -31,6 +32,8 @@ exports.userSignup = async (req, res) => {
         }
         // console.log("role", role)
         // console.log("password", req.body)
+        var hash_transaction = crypto.randomBytes(8).toString('hex');
+        console.log("hash_transaction",hash_transaction.length)
         const hashedPassword = await hashPassword(password);
         const newUser = new User({
             first_name: first_name,
@@ -38,7 +41,8 @@ exports.userSignup = async (req, res) => {
             email: email,
             password: hashedPassword, 
             confirmpassword:confirmpassword,
-            role:role         
+            role:role,
+            hash_transaction:hash_transaction       
         });
 
         if(password != confirmpassword){
