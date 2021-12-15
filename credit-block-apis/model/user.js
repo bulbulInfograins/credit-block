@@ -1,8 +1,11 @@
 const mongoose = require("mongoose")
 const schema = mongoose.Schema
 const Users = new schema({
-    name: {
+    first_name: {
         type: String,
+    },
+    last_name:{
+        type:String
     },
     email: {
         type: String,
@@ -14,6 +17,9 @@ const Users = new schema({
     password: {
         type: String,
         default: ''
+    },
+    confirmpassword:{
+        type:String
     },
     role:{
         type: Number,

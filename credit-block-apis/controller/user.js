@@ -14,22 +14,40 @@ async function validatePassword(plainPassword, hashedPassword) {
 exports.userSignup = async (req, res) => {
     try {
         const {
-            name,
+            first_name,
+            last_name,
             email,
             password,
-            role       //client:1, broker:2, supervisor:3
+            confirmpassword,
         } = req.body
+        var role = req.body.role       //client:1, broker:2, supervisor:3
+        if(req.body.role == "Client"){
+            role=1;
+        }if(req.body.role == "Broker"){
+            role=2;
+        }
+        if(req.body.role == "Supervisor"){
+            role=3;
+        }
+        // console.log("role", role)
+        // console.log("password", req.body)
         const hashedPassword = await hashPassword(password);
         const newUser = new User({
-            name: name,
+            first_name: first_name,
+            last_name:last_name,
             email: email,
             password: hashedPassword, 
+            confirmpassword:confirmpassword,
             role:role         
         });
 
+        if(password != confirmpassword){
+            return res.json({statusCode:401, message:"Pasword Mismatch"})
+        }
+
         var UserData = await User.find({email:req.body.email})
         if(UserData.length >0){
-            return res.json({statusCode: 400, message: "Email alerady exist"})
+            return res.json({statusCode: 402, message: "Email alerady exist"})
         }
         let response = new User(newUser)
         response.save()
@@ -63,7 +81,7 @@ exports.userlogin = async (req, res, next) => {
         }
 
         const validPassword = await validatePassword(password, user.password);
-        if (!validPassword) return res.json({statusCode:2,message:'Password is not correct'})
+        if (!validPassword) return res.json({statusCode:402,message:'Password is not correct'})
 
         const accessToken = jwt.sign({
             userId: user._id
@@ -77,6 +95,6 @@ exports.userlogin = async (req, res, next) => {
         return res.json({statusCode:200,message:"login sucessful", accessToken:accessToken})
     } catch (error) {
         console.log(error);
-        return res.json({statusCode:403,message:"login failed"})
+        return res.json({statusCode:500,message:"login failed"})
     }
 }

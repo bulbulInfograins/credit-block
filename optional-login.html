@@ -43,25 +43,25 @@
               
              <div class="mb-12 sm:mb-8">
                 <h2>Log in as <span class="fw-bold role_is"></span></h2>
-              <p class="mt-2 fw-light color-text">Doesn't have an account yet? <a href="#" class="underline color-away">Sign Up</a></p>
+              <p class="mt-2 fw-light color-text">Doesn't have an account yet? <a href="signup.html" class="underline color-away">Sign Up</a></p>
              </div>
              <div class="form-group">
                <form id="form"  method="POST">
                 <div class="form-group">
                   <label class="fw-regular" for="exampleInputEmail1">Email Address</label>
-                  <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="you@example.com" >
-                  <h6 id="usercheck" style="color: red;">*Email not valid</h6>
+                  <input type="email" class="form-control validate" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="you@example.com" >
+                  <p id="usercheck" style="color: red;">*Email not valid</p>
                 </div>
                 <div class="form-group">
                     <label class="fw-regular w-100" for="exampleInputPassword1">Password <a href="#" class="underline color-away float-right">Forgot Password?</a></label>
-                    <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Enter 6 character or more" > 
-                    <h6 id="passwordcheck" style="color: red;" >*Incorrect password</h6>
+                    <input type="password" class="form-control validate" name="password" id="exampleInputPassword1" placeholder="Enter 6 character or more" > 
+                    <p id="passwordcheck" style="color: red;" >*Incorrect password</p>
                   </div>
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
                     <label class="form-check-label fs-14" for="exampleCheck1">Remember me</label>
                 </div>
-                <button >Login</button>
+                <button class="button uppercase w-100 text-center">Login</button>
                </form>
 
              </div>
@@ -137,11 +137,18 @@ Technology:
       $('#form').on('submit', async function(e){
         var url_string = window.location.href;
         var url = new URL(url_string);
-        var role = url.searchParams.get("role");
-        // console.log("rrrrrrrrrrrrrr",role);
-        // console.log('sbtsdfdsf', role);
-
-          
+        var user_role = url.searchParams.get("q");
+        var role = 0;
+        if(user_role == "Client"){
+          role = 1;
+        }
+        if(user_role == "Broker"){
+          role = 2;
+        }
+        if(user_role == "Supervisor"){
+          role = 3
+        }
+       
         e.preventDefault();
         $.ajax({
           url: "http://localhost:5000/userlogin?role="+role,
@@ -155,12 +162,6 @@ Technology:
             console.log(result)
             if(result.statusCode == 401){
               $("#usercheck").show();
-
-              // $('#usercheck').value = '';
-              // $('#usercheck').hide();
-
-              // $('.usercheck').hide();
-            // $('#usercheck').empty();
             }
             if(result.statusCode  == 402){
               $("#passwordcheck").show();
@@ -182,20 +183,18 @@ Technology:
           },
           error:function(err){
             console.log(err)
-            // window.location.href = '/index.html';
+            window.location.href = '/index.html';
           }
         });
       })
     </script>
-    <!-- <script>
-      function myfunction(){
-        // var x = document.getElementById("usercheck");
-        $(document).keyup(function(e) {
-        $('#usercheck').val = "";
-        });
-
-        
-      }
-    </script> -->
+    <script>
+      $(document).ready(function(){
+        $(".validate").focus(function(){
+            $("#usercheck").hide();
+            $("#passwordcheck").hide();
+        })
+      })
+    </script> 
   </body>
 </html>
