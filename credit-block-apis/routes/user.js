@@ -9,10 +9,11 @@ router.use(bodyParser.json());
 
 
 const {
-    userSignup,userlogin
+    userSignup,userlogin,getUser
 }= require("../controller/user")
 
 router.post("/userSignup",userSignup);
 router.post("/userlogin",userlogin);
+router.get("/getUser",getUser);
 
 module.exports = router;

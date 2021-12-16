@@ -83,7 +83,6 @@ exports.userlogin = async (req, res, next) => {
         if(user.role != role){
             return res.json({statusCode:403, message:"Incorrect Role"})
         }
-
         const validPassword = await validatePassword(password, user.password);
         if (!validPassword) return res.json({statusCode:402,message:'Password is not correct'})
 
@@ -96,9 +95,21 @@ exports.userlogin = async (req, res, next) => {
             accessToken
         })
         console.log(accessToken)
-        return res.json({statusCode:200,message:"login sucessful", accessToken:accessToken})
+        return res.json({statusCode:200,message:"login sucessful", accessToken:accessToken, data:user})
     } catch (error) {
         console.log(error);
         return res.json({statusCode:500,message:"login failed"})
     }
+}
+
+exports.getUser = async (req, res)=>{
+    var id = req.query.id
+    User.findById({_id:id}).then((result)=>{
+        if(!result){
+            return res.json({statusCode:400, message:"Data Not Found"})
+        }
+        return res.json({statusCode:200, data:result})
+    }).catch((err)=>{
+        return res.json({statusCode:500, message:"Something went wrong"})
+    })
 }
