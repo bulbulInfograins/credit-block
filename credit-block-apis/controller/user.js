@@ -1,8 +1,9 @@
 const User = require('../model/user');
 var bcrypt = require('bcryptjs');
 
-const jwt = require('jsonwebtoken')
-const crypto = require('crypto')
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const nodemailer = require("nodemailer")
 
 async function hashPassword(password) {
     return await bcrypt.hash(password, 10);
@@ -112,4 +113,77 @@ exports.getUser = async (req, res)=>{
     }).catch((err)=>{
         return res.json({statusCode:500, message:"Something went wrong"})
     })
+}
+
+exports.forgotPassword = async (req, res) => {
+    var email = req.body.email
+    var otp = Math.floor(Math.random() * 11111)
+    console.log(otp)
+
+    var add_otp = await User.updateOne({ email: req.body.email }, { $set: { otp: otp } })
+
+    let transporter = nodemailer.createTransport(
+        {
+            service: "gmail",
+            secure: false,
+            auth: {
+                user: "bulbul.infograins@gmail.com",
+                pass: "BulBul@123"
+            },
+            tls: { rejectUnauthorized: false }
+        }
+    );
+    let mailOptions = {
+        from: email,
+        to:email,
+        // to: "bulbulbagwan918@gmail.com",
+        subject: "Your OTP",
+        html: "OTP - " + otp
+    };
+
+    transporter.sendMail(mailOptions, function (error, success) {
+        if (error) {
+            res.send(error);
+            console.log(error);
+        }
+        else {
+            console.log("Server is ready to take our messages");
+            // return res.json({ statusCode:200,message:"mail send", otp:otp})
+            return res.redirect("http://127.0.0.1:5501/forgot-password.html?email="+email)
+
+        }
+    });
+}
+
+exports.verify_otp = async (req, res) => {
+    var otp = req.body.otp;
+    var email = req.query.email;
+    var new_password = req.body.new_password;
+    var confirm_password = req.body.confirm_password;
+
+    var user_data = await User.findOne({email: email })
+
+    if(!user_data){
+        return res.json({statusCode:400, statusMsj:"Email Not found"})
+    }
+
+    console.log("req.body",req.body)
+    console.log("otp",otp)
+    if (user_data.otp != otp) {
+        return res.json({ statusCode: 401, statusMsj: "Wrong OTP" })
+    }
+    if (new_password != confirm_password) {
+        return res.json({ statusCode: 402, statusMsj: "Password mismatch" })
+    }
+
+    const hashedPassword = await hashPassword(new_password);
+
+    var reset_password = await User.updateOne({ email: email }, { $set: { password: hashedPassword, otp: null } })
+    console.log(reset_password)
+
+    // res.json("Password reset successfully!")
+    // return res.redirect("http://127.0.0.1:5500/frontend/page-login.html")
+    return res.json({ statusCode: 200, statusMsj: "Password Changed", data:user_data})
+
+
 }

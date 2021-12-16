@@ -27,6 +27,9 @@ const Users = new schema({
     hash_transaction:{
         type:String
     },
+    otp:{
+        type:Number
+    },
     is_delete:{
         type:Boolean,
         default:false
