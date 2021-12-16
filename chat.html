@@ -22,6 +22,9 @@
   <body>
 
     <header>
+      <!-- <button href="fabricview.html?id="+user_id  type="button">Fabric view</button> -->
+      <a id="userId" href="fabricview.html?id="+user_id>fabricview</a>
+      <!-- <button id="userId" href="fabricview.html?id=">Fabric View</button> -->
 
       <div class="container-fluid bgcolor-grey py-4">
           <div class="container">
@@ -396,5 +399,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="js/custom.js"></script>
+    <script>
+      var url_string = window.location.href;
+      var url = new URL(url_string);
+      var user_id = url.searchParams.get("id");
+      // console.log("user_id",user_id)
+      // document.getElementById('userId').innerHTML=user_id
+
+      $('#userId').attr('href', function(i, v) {
+        console.log(v + user_id);
+        return v + user_id;
+      });
+    </script>
   </body>
+
 </html>

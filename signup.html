@@ -119,13 +119,12 @@
     crossorigin="anonymous"></script>
   <script src="js/custom.js"></script>
   <script>
-      var user_role=$("#role").val();
         $("#usercheck").hide()
         $("#passwordcheck").hide()
         $('#signupform').on('submit', async function(e){  
           e.preventDefault();
           $.ajax({
-            url: "http://localhost:5000/userSignup",
+            url: "http://3.138.38.80:3111/userSignup",
             type: "POST",
             data: {
               role:$("#role").val(),
@@ -154,6 +153,8 @@
                 //   'token':result.access,
                 //   'isAdmin':1
                 // })))
+                var user_role=$("#role").val();
+                console.log("user_role",user_role)
                 window.location.href = '/optional-login.html?q='+user_role;
   
               }
